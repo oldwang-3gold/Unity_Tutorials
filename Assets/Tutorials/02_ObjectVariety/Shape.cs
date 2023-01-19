@@ -56,6 +56,8 @@ public class Shape : PersistableObject
 
     public override void Save(GameDataWriter writer)
     {
+        writer.Write(shapeId);
+        writer.Write(MaterialId);
         base.Save(writer);
         writer.Write(color);
     }

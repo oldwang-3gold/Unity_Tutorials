@@ -3,14 +3,19 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 
-public class Game_02 : PersistableObject
+public class Game_03 : PersistableObject
 {
-    public ShapeFactory ShapeFactory;
+    public ShapeFactory_03 shapeFactory;
     public PersistentStorage storage;
     public KeyCode createKey = KeyCode.C;
+    public KeyCode destroyKey = KeyCode.X;
     public KeyCode newGameKey = KeyCode.N;
     public KeyCode saveKey = KeyCode.S;
     public KeyCode loadKey = KeyCode.L;
+
+    public float CreationSpeed { get; set; }
+    public float DestructionSpeed { get; set; }
+    float creationProgress, destructionProgress;
 
     private List<Shape> shapes;
     const int saveVersion = 1;
@@ -25,7 +30,11 @@ public class Game_02 : PersistableObject
     {
         if (Input.GetKeyDown(createKey))
         {
-            CreateObject();
+            CreateShape();
+        }
+        else if (Input.GetKeyDown(destroyKey))
+        {
+            DestroyShape();
         }
         else if (Input.GetKeyDown(newGameKey))
         {
@@ -40,11 +49,24 @@ public class Game_02 : PersistableObject
             BeginNewGame();
             storage.Load(this);
         }
+        creationProgress += Time.deltaTime * CreationSpeed;
+        while (creationProgress >= 1f)
+        {
+            creationProgress -= 1f;
+            CreateShape();
+        }
+
+        destructionProgress += Time.deltaTime * DestructionSpeed;
+        while (destructionProgress >= 1f)
+        {
+            destructionProgress -= 1f;
+            DestroyShape();
+        }
     }
 
-    void CreateObject()
+    void CreateShape()
     {
-        Shape instance = ShapeFactory.GetRandom();
+        Shape instance = shapeFactory.GetRandom();
         Transform t = instance.transform;
         t.localPosition = Random.insideUnitSphere * 5f;
         t.localRotation = Random.rotation;
@@ -57,7 +79,7 @@ public class Game_02 : PersistableObject
     {
         for (int i = 0; i < shapes.Count; i++)
         {
-            Destroy(shapes[i].gameObject);
+            shapeFactory.Reclaim(shapes[i]);
         }
         shapes.Clear();
     }
@@ -87,9 +109,21 @@ public class Game_02 : PersistableObject
         {
             int shapeId = reader.ReadInt();
             int materialId = reader.ReadInt();
-            Shape instance = ShapeFactory.Get(shapeId, materialId);
+            Shape instance = shapeFactory.Get(shapeId, materialId);
             instance.Load(reader);
             shapes.Add(instance);
+        }
+    }
+
+    void DestroyShape()
+    {
+        if (shapes.Count > 0)
+        {
+            int index = Random.Range(0, shapes.Count);
+            shapeFactory.Reclaim(shapes[index]);
+            int lastIndex = shapes.Count - 1;
+            shapes[index] = shapes[lastIndex];
+            shapes.RemoveAt(lastIndex);
         }
     }
 }

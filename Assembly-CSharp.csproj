@@ -64,6 +64,8 @@
     <Compile Include="Assets\Tutorials\01_PersistentObjects\PersistableObject.cs" />
     <Compile Include="Assets\Tutorials\03_ReusingObjects\Game_03.cs" />
     <Compile Include="Assets\Tutorials\03_ReusingObjects\ShapeFactory_03.cs" />
+    <Compile Include="Assets\Tutorials\04_MultipleScenes\ShapeFactory_04.cs" />
+    <Compile Include="Assets\Tutorials\04_MultipleScenes\Game_04.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />

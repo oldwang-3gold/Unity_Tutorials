@@ -45,6 +45,12 @@ public class GameDataWriter
         writer.Write(color.b);
         writer.Write(color.a);
     }
+
+    public void Write(Random.State value)
+    {
+        // Debug.Log(JsonUtility.ToJson(value));
+        writer.Write(JsonUtility.ToJson(value));
+    }
 }
 
 public class GameDataReader
@@ -92,6 +98,11 @@ public class GameDataReader
         color.b = reader.ReadSingle();
         color.a = reader.ReadSingle();
         return color;
+    }
+
+    public Random.State ReadRandomState()
+    {
+        return JsonUtility.FromJson<Random.State>(reader.ReadString());
     }
 }
 

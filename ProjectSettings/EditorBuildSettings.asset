@@ -4,5 +4,17 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Tutorials/06_MoreGameState/06_MoreGameState.unity
+    guid: 70240367a4860b34ebfd8c357acbb728
+  - enabled: 1
+    path: Assets/Tutorials/05_SpawnZones/Scenes/Level 1.unity
+    guid: 19ea17758754c644cb2a31f0ebb3595c
+  - enabled: 1
+    path: Assets/Tutorials/05_SpawnZones/Scenes/Level 2.unity
+    guid: d903a66c0a4b35a43b7109dda4fb7e0b
+  - enabled: 1
+    path: Assets/Tutorials/05_SpawnZones/Scenes/Level 3.unity
+    guid: 37e4723e7b7c91f4a92ccde5d69078a8
   m_configObjects: {}

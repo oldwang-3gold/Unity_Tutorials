@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 [CreateAssetMenu]
 public class ShapeFactory_04 : ScriptableObject
@@ -15,6 +16,8 @@ public class ShapeFactory_04 : ScriptableObject
     bool recycle;
 
     List<Shape>[] pools;
+
+    Scene poolScene;
 
     public Shape Get(int shapeId = 0, int materialId = 0)
     {
@@ -37,6 +40,9 @@ public class ShapeFactory_04 : ScriptableObject
             {
                 instance = Instantiate(prefabs[shapeId]);
                 instance.ShapeId = shapeId;
+                SceneManager.MoveGameObjectToScene(
+                    instance.gameObject, poolScene
+                );
             }
         }
         else
@@ -63,6 +69,27 @@ public class ShapeFactory_04 : ScriptableObject
         {
             pools[i] = new List<Shape>();
         }
+        if (Application.isEditor)
+        {
+            poolScene = SceneManager.GetSceneByName(name);
+            if (poolScene.isLoaded)
+            {
+                // 运行时，重新编译C#时，会导致该ScriptObject中存储的Shape列表引用丢失
+                // 
+                GameObject[] rootObjects = poolScene.GetRootGameObjects();
+                for (int i = 0; i < rootObjects.Length; i++)
+                {
+                    Shape pooledShape = rootObjects[i].GetComponent<Shape>();
+                    // 对于未显示的形状，重新添加引用
+                    if (!pooledShape.gameObject.activeSelf)
+                    {
+                        pools[pooledShape.ShapeId].Add(pooledShape);
+                    }
+                }
+                return;
+            }
+        }
+        poolScene = SceneManager.CreateScene(name);
     }
 
     public void Reclaim(Shape shapeToRecycle)

@@ -57,15 +57,22 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Tutorials\02_ObjectVariety\ShapeFactory.cs" />
+    <Compile Include="Assets\Tutorials\04_MultipleScenes\Game_04.cs" />
     <Compile Include="Assets\Tutorials\01_PersistentObjects\PersistentStorage.cs" />
     <Compile Include="Assets\Tutorials\01_PersistentObjects\Game.cs" />
+    <Compile Include="Assets\Tutorials\03_ReusingObjects\ShapeFactory_03.cs" />
+    <Compile Include="Assets\Tutorials\03_ReusingObjects\Game_03.cs" />
     <Compile Include="Assets\Tutorials\02_ObjectVariety\Game_02.cs" />
     <Compile Include="Assets\Tutorials\02_ObjectVariety\Shape.cs" />
     <Compile Include="Assets\Tutorials\01_PersistentObjects\PersistableObject.cs" />
-    <Compile Include="Assets\Tutorials\03_ReusingObjects\Game_03.cs" />
-    <Compile Include="Assets\Tutorials\03_ReusingObjects\ShapeFactory_03.cs" />
     <Compile Include="Assets\Tutorials\04_MultipleScenes\ShapeFactory_04.cs" />
-    <Compile Include="Assets\Tutorials\04_MultipleScenes\Game_04.cs" />
+    <Compile Include="Assets\Tutorials\05_SpawnZones\Game_05.cs" />
+    <Compile Include="Assets\Tutorials\05_SpawnZones\SpawnZone.cs" />
+    <Compile Include="Assets\Tutorials\05_SpawnZones\GameLevel.cs" />
+    <Compile Include="Assets\Tutorials\05_SpawnZones\SphereSpawnZone.cs" />
+    <Compile Include="Assets\Tutorials\05_SpawnZones\CubeSpawnZone.cs" />
+    <Compile Include="Assets\Tutorials\05_SpawnZones\CompositeSpawnZone.cs" />
+    <Compile Include="Assets\Tutorials\06_MoreGameState\Game_06.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />

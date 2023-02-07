@@ -57,7 +57,7 @@ public class MovingSphere : MonoBehaviour
         desiredJump |= Input.GetButtonDown("Jump");
 
         GetComponent<Renderer>().material.SetColor(
-            "_Color", Color.white * (groundContactCount * 0.25f)
+            "_Color", OnGround ? Color.black : Color.white
         );
     }
 

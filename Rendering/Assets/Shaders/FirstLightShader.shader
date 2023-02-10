@@ -14,12 +14,13 @@ Shader "Custom/FirstLightShader"
 				"LightMode" = "ForwardBase"
 			}
 			CGPROGRAM
+			
+			#pragma target 3.0
 
 			#pragma vertex MyVertexProgram
 			#pragma fragment MyFragmentProgram
 			
-			#include "UnityStandardBRDF.cginc"
-			#include "UnityStandardUtils.cginc"
+			#include "UnityPBSLighting.cginc"
 			
 			float4 _Tint;
 			sampler2D _MainTex;
@@ -64,16 +65,28 @@ Shader "Custom/FirstLightShader"
 				albedo = DiffuseAndSpecularFromMetallic(
 					albedo, _Metallic, specularTint, oneMinusReflectivity
 				);
-				float3 diffuse = albedo * lightColor * DotClamped(lightDir, i.normal);
+				//float3 diffuse = albedo * lightColor * DotClamped(lightDir, i.normal);
+				//float3 halfVector = normalize(lightDir + viewDir);
+				//float3 specular = specularTint * pow(
+				//	DotClamped(halfVector, i.normal),
+				//	_Smoothness * 100
+				//);
 				
-				//float3 reflectionDir = reflect(-lightDir, i.normal);
-				float3 halfVector = normalize(lightDir + viewDir);
+				UnityLight light;
+				light.color = lightColor;
+				light.dir = lightDir;
+				light.ndotl = DotClamped(i.normal, lightDir);
 				
-				float3 specular = specularTint * pow(
-					DotClamped(halfVector, i.normal),
-					_Smoothness * 100
+				UnityIndirect indirectLight;
+				indirectLight.diffuse = 0;
+				indirectLight.specular = 0;
+				
+				return UNITY_BRDF_PBS(
+					albedo, specularTint,
+					oneMinusReflectivity, _Smoothness,
+					i.normal, viewDir,
+					light, indirectLight
 				);
-				return float4(diffuse + specular, 1);
 			}
 
 			ENDCG

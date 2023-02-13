@@ -22,6 +22,7 @@ Shader "Custom/FirstLightShader"
 			
 			#pragma target 3.0
 			
+			#pragma multi_compile _ SHADOWS_SCREEN
 			#pragma multi_compile _ VERTEXLIGHT_ON
 
 			#pragma vertex MyVertexProgram
@@ -44,7 +45,7 @@ Shader "Custom/FirstLightShader"
 			
 			#pragma target 3.0
 			
-			#pragma multi_compile_fwdadd
+			#pragma multi_compile_fwdadd_fullshadows
 			//#pragma multi_compile DIRECTIONAL DIRECTIONAL_COOKIE POINT SPOT
 			
 			#pragma vertex MyVertexProgram
@@ -53,6 +54,23 @@ Shader "Custom/FirstLightShader"
 			
 			#include "Lighting.cginc"
 
+			ENDCG
+		}
+		
+		Pass {
+			Tags {
+				"LightMode" = "ShadowCaster"
+			}
+			
+			CGPROGRAM
+			
+			#pragma target 3.0
+			
+			#pragma vertex MyShadowVertexProgram
+			#pragma fragment MyShadowFragmentProgram
+			
+			#include "My Shadows.cginc"
+			
 			ENDCG
 		}
 	}

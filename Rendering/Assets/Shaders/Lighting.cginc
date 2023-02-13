@@ -16,21 +16,22 @@ float _Metallic;
 float _Smoothness;
 
 struct VertexData {
-	float4 position : POSITION;
+	float4 vertex : POSITION;
 	float3 normal : NORMAL;
 	float4 tangent : TANGENT;
 	float2 uv : TEXCOORD0;
 };
 
 struct Interpolators {
-	float4 position : SV_POSITION;
+	float4 pos : SV_POSITION;
 	float4 uv : TEXCOORD0;
 	float3 normal : TEXCOORD1;
-	float4 tangent : TEXCOORD2
+	float4 tangent : TEXCOORD2;
 	float3 worldPos : TEXCOORD3;
 	
+	SHADOW_COORDS(5)
 	#if defined(VERTEXLIGHT_ON)
-		float3 vertexLightColor : TEXCOORD4;
+		float3 vertexLightColor : TEXCOORD6;
 	#endif
 };
 
@@ -42,7 +43,7 @@ UnityLight CreateLight (Interpolators i) {
 		light.dir = _WorldSpaceLightPos0.xyz;
 	#endif
 	
-	UNITY_LIGHT_ATTENUATION(attenuation, 0, i.worldPos);
+	UNITY_LIGHT_ATTENUATION(attenuation, i, i.worldPos);
 	light.color = _LightColor0.rgb * attenuation;
 	light.ndotl = DotClamped(i.normal, light.dir);
 	return light;
@@ -63,8 +64,8 @@ void ComputeVertexLightColor (inout Interpolators i){
 
 Interpolators MyVertexProgram(VertexData v) {
 	Interpolators i;
-	i.position = UnityObjectToClipPos(v.position);
-	i.worldPos = mul(unity_ObjectToWorld, v.position);
+	i.pos = UnityObjectToClipPos(v.vertex);
+	i.worldPos = mul(unity_ObjectToWorld, v.vertex);
 	// i.uv = v.uv * _MainTex_ST.xy + _MainTex_ST.zw;
 	i.uv.xy = TRANSFORM_TEX(v.uv, _MainTex);
 	i.uv.zw = TRANSFORM_TEX(v.uv, _DetailTex);
@@ -72,7 +73,10 @@ Interpolators MyVertexProgram(VertexData v) {
 	//i.normal = normalize(i.normal);
 	i.normal = UnityObjectToWorldNormal(v.normal);
 	i.tangent = float4(UnityObjectToWorldDir(v.tangent.xyz), v.tangent.w);
-	//ComputeVertexLightColor(i);
+	
+	TRANSFER_SHADOW(i);
+	
+	ComputeVertexLightColor(i);
 	return i;
 }
 

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public enum GameTileContentType
 {
-    Empty, Desination, Wall
+    Empty, Desination, Wall, SpawnPoint
 }
 
 public class GameTileContent : MonoBehaviour

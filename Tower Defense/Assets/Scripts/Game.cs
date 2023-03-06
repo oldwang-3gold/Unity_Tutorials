@@ -70,6 +70,8 @@ public class Game : MonoBehaviour
         }
 
         enemies.GameUpdate();
+        Physics.SyncTransforms(); // 强制同步下世界所有敌人的坐标，便于物理引擎去处理
+        board.GameUpdate();
     }
 
     void SpawnEnemy()
@@ -104,7 +106,14 @@ public class Game : MonoBehaviour
         GameTile tile = board.GetTile(TouchRay);
         if (tile != null)
         {
-            board.ToggleWall(tile);
+            if (Input.GetKey(KeyCode.LeftShift))
+            {
+                board.ToggleTower(tile);
+            }
+            else
+            {
+                board.ToggleWall(tile);
+            }
         }
     }
 }

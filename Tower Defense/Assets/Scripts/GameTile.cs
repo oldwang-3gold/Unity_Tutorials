@@ -161,7 +161,7 @@ public class GameTile : MonoBehaviour
             neighbor.transform.localPosition + direction.GetHalfVector();
 
         neighbor.PathDirection = direction;
-        return neighbor.Content.Type != GameTileContentType.Wall ? neighbor : null;
+        return neighbor.Content.BlockPaths ? null : neighbor;
     }
 
     public static void MakeEastWestNeighbors (GameTile east, GameTile west)

@@ -16,14 +16,41 @@ public class Game : MonoBehaviour
     [SerializeField]
     EnemyFactory enemyFactory = default;
 
+    [SerializeField]
+    WarFactory warFactory = default;
+
     [SerializeField, Range(0.1f, 10f)]
     float spawnSpeed = 1f;
 
     float spawnProgress;
 
-    EnemyCollection enemies = new EnemyCollection();
+    GameBehaviourCollection enemies = new GameBehaviourCollection();
+    GameBehaviourCollection nonEnemies = new GameBehaviourCollection();
 
     Ray TouchRay => Camera.main.ScreenPointToRay(Input.mousePosition);
+
+    TowerType selectedTowerType;
+
+    static Game instance;
+
+    public static Shell SpawnShell()
+    {
+        Shell shell = instance.warFactory.Shell;
+        instance.nonEnemies.Add(shell);
+        return shell;
+    }
+
+    public static Explosion SpawnExplosion()
+    {
+        Explosion explosion = instance.warFactory.Explosion;
+        instance.nonEnemies.Add(explosion);
+        return explosion;
+    }
+
+    private void OnEnable()
+    {
+        instance = this;
+    }
 
     private void Awake()
     {
@@ -61,6 +88,14 @@ public class Game : MonoBehaviour
         {
             board.ShowGrid = !board.ShowGrid;
         }
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            selectedTowerType = TowerType.Laser;
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            selectedTowerType = TowerType.Mortar;
+        }
 
         spawnProgress += spawnSpeed * Time.deltaTime;
         while (spawnProgress >= 1f)
@@ -72,6 +107,7 @@ public class Game : MonoBehaviour
         enemies.GameUpdate();
         Physics.SyncTransforms(); // 强制同步下世界所有敌人的坐标，便于物理引擎去处理
         board.GameUpdate();
+        nonEnemies.GameUpdate();
     }
 
     void SpawnEnemy()
@@ -108,7 +144,7 @@ public class Game : MonoBehaviour
         {
             if (Input.GetKey(KeyCode.LeftShift))
             {
-                board.ToggleTower(tile);
+                board.ToggleTower(tile, selectedTowerType);
             }
             else
             {

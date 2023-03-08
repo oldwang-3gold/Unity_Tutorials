@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Enemy : MonoBehaviour
+public class Enemy : GameBehaviour
 {
     [SerializeField]
     Transform model = default;
@@ -47,7 +47,7 @@ public class Enemy : MonoBehaviour
         Health -= damage;
     }
 
-    public bool GameUpdate()
+    public override bool GameUpdate()
     {
         if (Health <= 0f)
         {

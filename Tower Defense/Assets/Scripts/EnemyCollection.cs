@@ -5,6 +5,8 @@ public class GameBehaviourCollection
 {
     List<GameBehaviour> behaviours = new List<GameBehaviour> ();
 
+    public bool IsEmpty => behaviours.Count == 0;
+
     public void Add(GameBehaviour behaviour)
     {
         behaviours.Add(behaviour);
@@ -22,5 +24,14 @@ public class GameBehaviourCollection
                 i -= 1;
             }
         }
+    }
+
+    public void Clear()
+    {
+        for (int i = 0; i < behaviours.Count; i++)
+        {
+            behaviours[i].Recycle();
+        }
+        behaviours.Clear();
     }
 }

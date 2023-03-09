@@ -14,15 +14,22 @@ public class Game : MonoBehaviour
     GameTileContentFactory tileContentFactory = default;
 
     [SerializeField]
-    EnemyFactory enemyFactory = default;
-
-    [SerializeField]
     WarFactory warFactory = default;
 
-    [SerializeField, Range(0.1f, 10f)]
-    float spawnSpeed = 1f;
+    [SerializeField]
+    GameScenario scenario = default;
 
-    float spawnProgress;
+    [SerializeField, Range(0, 100)]
+    int startingPlayerHealth = 10;
+
+    [SerializeField, Range(1f, 10f)]
+    float playSpeed = 1f;
+
+    const float pausedTimeScale = 0f;
+
+    int playerHealth;
+
+    GameScenario.State activeScenario;
 
     GameBehaviourCollection enemies = new GameBehaviourCollection();
     GameBehaviourCollection nonEnemies = new GameBehaviourCollection();
@@ -54,8 +61,10 @@ public class Game : MonoBehaviour
 
     private void Awake()
     {
+        playerHealth = startingPlayerHealth;
         board.Initialize(boardSize, tileContentFactory);
         board.ShowGrid = true;
+        activeScenario = scenario.Begin();
     }
 
     private void OnValidate()
@@ -97,11 +106,32 @@ public class Game : MonoBehaviour
             selectedTowerType = TowerType.Mortar;
         }
 
-        spawnProgress += spawnSpeed * Time.deltaTime;
-        while (spawnProgress >= 1f)
+        if (Input.GetKeyDown(KeyCode.Space))
         {
-            spawnProgress -= 1f;
-            SpawnEnemy();
+            Time.timeScale =
+                Time.timeScale > pausedTimeScale ? pausedTimeScale : playSpeed;
+        }
+        else if (Time.timeScale > pausedTimeScale)
+        {
+            Time.timeScale = playSpeed;
+        }
+
+        if (Input.GetKeyDown(KeyCode.B))
+        {
+            BeginNewGame();
+        }
+
+        if (playerHealth <= 0 && startingPlayerHealth > 0)
+        {
+            Debug.Log("Defeat!");
+            BeginNewGame();
+        }
+
+        if (!activeScenario.Progress() && enemies.IsEmpty)
+        {
+            Debug.Log("Victory!");
+            BeginNewGame();
+            activeScenario.Progress();
         }
 
         enemies.GameUpdate();
@@ -110,14 +140,27 @@ public class Game : MonoBehaviour
         nonEnemies.GameUpdate();
     }
 
-    void SpawnEnemy()
+    public static void SpawnEnemy (EnemyFactory factory, EnemyType type)
     {
-        GameTile spawnPoint =
-            board.GetSpawnPoint(Random.Range(0, board.SpawnPointCount));
-        Enemy enemy = enemyFactory.Get();
+        GameTile spawnPoint = instance.board.GetSpawnPoint(
+            Random.Range(0, instance.board.SpawnPointCount));
+        Enemy enemy = factory.Get(type);
         enemy.SpawnOn(spawnPoint);
+        instance.enemies.Add(enemy);
+    }
 
-        enemies.Add(enemy);
+    public static void EnemyReachedDestination()
+    {
+        instance.playerHealth -= 1;
+    }
+
+    void BeginNewGame()
+    {
+        playerHealth = startingPlayerHealth;
+        enemies.Clear();
+        nonEnemies.Clear();
+        board.Clear();
+        activeScenario = scenario.Begin();
     }
 
     void HandleAlternativeTouch()

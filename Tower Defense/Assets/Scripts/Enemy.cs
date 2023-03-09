@@ -1,5 +1,10 @@
 using UnityEngine;
 
+public enum EnemyType
+{
+    Small, Medium, Large
+}
+
 public class Enemy : GameBehaviour
 {
     [SerializeField]
@@ -32,13 +37,13 @@ public class Enemy : GameBehaviour
     float pathOffset;
 
     float speed;
-    public void Initialize (float scale, float speed, float pathOffset)
+    public void Initialize (float scale, float speed, float pathOffset, float health)
     {
         Scale = scale;
         model.localScale = new Vector3(scale, scale, scale);
         this.speed = speed;
         this.pathOffset = pathOffset;
-        Health = 100f * scale;
+        Health = health;
     }
 
     public void ApplyDamage (float damage)
@@ -51,7 +56,7 @@ public class Enemy : GameBehaviour
     {
         if (Health <= 0f)
         {
-            OriginFactory.Reclaim(this);
+            Recycle();
             return false;
         }
 
@@ -60,7 +65,8 @@ public class Enemy : GameBehaviour
         {
             if (tileTo == null)
             {
-                OriginFactory.Reclaim(this);
+                Game.EnemyReachedDestination();
+                Recycle();
                 return false;
             }
 
@@ -81,6 +87,11 @@ public class Enemy : GameBehaviour
             transform.localRotation = Quaternion.Euler(0f, angle, 0f);
         }
         return true;
+    }
+
+    public override void Recycle()
+    {
+        OriginFactory.Reclaim(this);
     }
 
     void PrepareNextState()

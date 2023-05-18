@@ -6,3 +6,7 @@ obj
 .vsconfig
 UserSettings
 .csproj
+/Tower Defense/*.sln
+/Tower Defense/*.csproj
+*.csproj
+

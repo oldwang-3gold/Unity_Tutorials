@@ -168,7 +168,7 @@ namespace ProjectX.Component
 
             if (inputX != 0 || inputZ != 0)
             {
-                m_Target.rotation = Quaternion.Lerp(m_Target.rotation, Quaternion.LookRotation(desireMoveDir), m_RotateSpeed);
+                m_Target.rotation = Quaternion.Lerp(m_Target.rotation, Quaternion.LookRotation(desireMoveDir), m_RotateSpeed * m_DeltaTime);
 
                 desireMoveDir *= m_MoveSpeed;
                 desireMoveDir += Vector3.up * m_Yspeed;

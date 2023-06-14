@@ -35,14 +35,14 @@ namespace ProjectX.Character
 
         public void Update(float deltaTime)
         {
-            
+            m_Movement.UpdateMovement(deltaTime);
+            m_Camera.UpdateCameraPosition(deltaTime);
+            m_Camera.UpdateCameraRotation(deltaTime);
         }
 
         public void FixedUpdate(float deltaTime)
         {
-            m_Camera.UpdateCameraPosition(deltaTime);
-            m_Camera.UpdateCameraRotation(deltaTime);
-            m_Movement.UpdateMovement(deltaTime);
+            
         }
     }
 }

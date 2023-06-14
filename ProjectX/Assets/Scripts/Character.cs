@@ -23,12 +23,12 @@ public class Character : MonoBehaviour
 
     public void Update()
     {
-        
+        m_Hero.Update(Time.deltaTime);
     }
 
     public void FixedUpdate()
     {
-        m_Hero.FixedUpdate(Time.deltaTime);
+        m_Hero.FixedUpdate(Time.fixedDeltaTime);
     }
 }
 

@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxSpeed: 4
   acceleration: 10
-  rotateSpeed: 50
+  rotateSpeed: 10
   minAngleSpeed: 100
   maxAngleSpeed: 400
   jumpSpeed: 5

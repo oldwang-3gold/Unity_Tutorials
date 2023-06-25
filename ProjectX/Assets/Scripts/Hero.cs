@@ -16,6 +16,7 @@ namespace ProjectX.Character
 
         public Hero(Transform transform) : base(transform)
         {
+            transform.gameObject.layer = LayerMask.NameToLayer("Hero");
         }
 
         public void SetFollowHeroCamera(CameraScriptableObject cameraSO, UnityEngine.Camera camera)

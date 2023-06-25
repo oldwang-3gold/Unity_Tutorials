@@ -13,5 +13,6 @@ MonoBehaviour:
   m_Name: Camera
   m_EditorClassIdentifier: 
   speed: 10
-  rotateSpeed: 5
+  rotateSpeed: 10
   lookAtOffset: {x: 0, y: 0.5, z: 2}
+  upClampedAngle: {x: 0, y: 0}

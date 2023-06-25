@@ -53,10 +53,9 @@ namespace ProjectX.Component
         {
             m_DeltaTime = deltaTime;
             Drop();
-            //Turn();
             Jump();
-            //Move();
-            MoveAndRotation();
+            Move();
+            Turn();
         }
 
         private void Drop()
@@ -69,63 +68,18 @@ namespace ProjectX.Component
             {
                 if (m_Yspeed < -1)
                 {
-                    m_Yspeed += m_Gravity * m_DeltaTime;
+                    m_Yspeed += m_Gravity * m_DeltaTime * m_DeltaTime;
                 }
             }
         }
 
         private void Turn()
         {
-            if (m_Input.x != 0 && m_Input.z != 0)
+            if (m_Input.x != 0 || m_Input.z != 0)
             {
                 // 只有左右才会影响旋转
-                float targetRotation = m_RotateSpeed * m_Input.x;
-                // 绕着Y轴进行旋转
-                m_Target.eulerAngles = Vector3.up * Mathf.Lerp(m_Target.eulerAngles.y, m_Target.eulerAngles.y + targetRotation, m_DeltaTime);
-            }
-        }
-
-        private void Move()
-        {
-            float h = Input.GetAxis("Horizontal");
-            float v = Input.GetAxis("Vertical");
-            m_Input.x = h;
-            m_Input.z = v;
-            // 下一个deltatime的目标速度值
-            m_MoveSpeed = Mathf.MoveTowards(m_MoveSpeed, m_Input.normalized.magnitude * m_MaxSpeed, m_Acceleration * m_DeltaTime);
-            m_Move = m_Input;
-
-
-            // 分别处理下前后，左右涉及到转向
-            if (m_Input.z != 0)
-            {
-                m_Move = v * m_DeltaTime * m_MoveSpeed * m_Target.forward;
-                m_Move += Vector3.up * m_Yspeed * m_DeltaTime;
-                m_CharacterController.Move(m_Move);
-                m_Animator.SetBool("Move", true);
-                m_Animator.SetFloat("InputH", 0);
-                m_Animator.SetFloat("InputV", m_Input.z);
-            }
-            else
-            {
-                if (m_Input.x != 0)
-                {
-                    m_Move = h * m_DeltaTime * m_MoveSpeed * m_Target.right;
-                    m_Move += Vector3.up * m_Yspeed * m_DeltaTime;
-                    m_CharacterController.Move(m_Move);
-                    m_Animator.SetBool("Move", true);
-                    m_Animator.SetFloat("InputH", m_Input.x);
-                    m_Animator.SetFloat("InputV", 0);
-                }
-                else
-                {
-                    // 不移动 但是可能会有跳跃和下落
-                    m_Move += Vector3.up * m_Yspeed * m_DeltaTime;
-                    m_CharacterController.Move(m_Move);
-                    m_Animator.SetBool("Move", false);
-                    m_Animator.SetFloat("InputH", m_Input.x);
-                    m_Animator.SetFloat("InputV", m_Input.z);
-                }
+                // 旋转
+                m_Target.rotation = Quaternion.Lerp(m_Target.rotation, Quaternion.LookRotation(m_Move), m_RotateSpeed * m_DeltaTime);
             }
         }
 
@@ -149,7 +103,7 @@ namespace ProjectX.Component
             }
         }
 
-        private void MoveAndRotation()
+        private void Move()
         {
             var inputX = Input.GetAxis("Horizontal");
             var inputZ = Input.GetAxis("Vertical");
@@ -164,36 +118,21 @@ namespace ProjectX.Component
             cameraRight.y = 0;
 
             m_MoveSpeed = Mathf.MoveTowards(m_MoveSpeed, m_Input.normalized.magnitude * m_MaxSpeed, m_Acceleration * m_DeltaTime);
-            Vector3 desireMoveDir = cameraForward * inputZ + cameraRight * inputX;
+            m_Move = cameraForward * inputZ + cameraRight * inputX;
 
+            Vector3 desiredDir = m_Move * m_MoveSpeed + Vector3.up * m_Yspeed;
+            m_Animator.SetFloat("Speed", m_MoveSpeed);
+            m_Animator.SetFloat("InputH", m_Input.x);
+            m_Animator.SetFloat("InputV", m_Input.z);
+            // SimpleMove会忽视Y轴影响,改用Move
+            m_CharacterController.Move(desiredDir * m_DeltaTime);
             if (inputX != 0 || inputZ != 0)
             {
-                m_Target.rotation = Quaternion.Lerp(m_Target.rotation, Quaternion.LookRotation(desireMoveDir), m_RotateSpeed * m_DeltaTime);
-
-                desireMoveDir *= m_MoveSpeed;
-                desireMoveDir += Vector3.up * m_Yspeed;
-                // SimpleMove会忽视Y轴影响
-                m_CharacterController.Move(desireMoveDir * m_DeltaTime);
                 m_Animator.SetBool("Move", true);
-                if (inputX != 0)
-                {
-                    m_Animator.SetFloat("InputH", m_Input.x);
-                    m_Animator.SetFloat("InputV", 0);
-                }
-                if (inputZ != 0)
-                {
-                    m_Animator.SetFloat("InputH", 0);
-                    m_Animator.SetFloat("InputV", m_Input.z);
-                }
-                
             }
-            else if (inputX == 0 && inputZ == 0)
+            else
             {
-                desireMoveDir += Vector3.up * m_Yspeed;
-                m_CharacterController.Move(desireMoveDir * m_DeltaTime);
                 m_Animator.SetBool("Move", false);
-                m_Animator.SetFloat("InputH", m_Input.x);
-                m_Animator.SetFloat("InputV", m_Input.z);
             }
             
         }

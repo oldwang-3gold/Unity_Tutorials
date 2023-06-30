@@ -21,8 +21,6 @@ public class Test : MonoBehaviour
         //Debug.Log($"{forward}, {calcForward}, {calcForward.magnitude}");
         Quaternion rotation = Quaternion.LookRotation(forward, up);
         //Debug.Log($"{rotation.eulerAngles}, {Quaternion.Inverse(rotation).eulerAngles}");
-
-        
     }
 
     private void Update()
